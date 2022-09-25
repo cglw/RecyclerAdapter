@@ -1,0 +1,17 @@
+apply plugin: 'java'
+
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.squareup:javapoet:1.12.1'
+
+    implementation 'org.apache.commons:commons-lang3:3.8.1'
+    implementation 'org.apache.commons:commons-collections4:4.1'
+    //auto-service可以帮我们把编译注解自动注册到项目中
+    implementation 'com.google.auto.service:auto-service:1.0-rc7'
+    annotationProcessor 'com.google.auto.service:auto-service:1.0-rc7'
+    implementation project(':annotations')
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8

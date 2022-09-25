@@ -1,0 +1,19 @@
+apply plugin: 'java'
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+sourceCompatibility = "8"
+targetCompatibility = "8"
+afterEvaluate {
+//    publishing {
+//        publications {
+//            release(MavenPublication) {
+//                from components.release
+//                groupId = 'com.lightee'
+//                artifactId = 'annotations'
+//                version = '1.0.0'
+//            }
+//        }
+//    }
+}

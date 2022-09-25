@@ -1,0 +1,2 @@
+include ':app', ':annotations', ':compiler', ':lib_adapter'
+rootProject.name = "RvAdapter"
