@@ -15,11 +15,11 @@ import java.util.Map;
 
 public class SimpleStrategy implements Strategy {
     //holder type
-    private final SparseArray<Class<? extends RecyclerView.ViewHolder>> typeHolderArray = new SparseArray<>();
+    protected final SparseArray<Class<? extends RecyclerView.ViewHolder>> typeHolderArray = new SparseArray<>();
     //model holder映射
-    private final Map<Class<?>, Class<? extends RecyclerView.ViewHolder>> oneToOneHolderMap = new HashMap<>();
+    protected final Map<Class<?>, Class<? extends RecyclerView.ViewHolder>> oneToOneHolderMap = new HashMap<>();
     //model holder判断映射
-    private final Map<Class<?>, OneToManyHolderCreate<?>> oneToManyHolderCreateMap = new HashMap<>();
+    protected final Map<Class<?>, OneToManyHolderCreate<?>> oneToManyHolderCreateMap = new HashMap<>();
 
     public <T> void registerOneToMany(Class<T> modelClass, OneToManyHolderCreate<T> oneToManayHolderCreate) {
         oneToManyHolderCreateMap.put(modelClass, oneToManayHolderCreate);

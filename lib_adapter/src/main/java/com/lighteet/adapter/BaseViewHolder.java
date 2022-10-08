@@ -21,7 +21,7 @@ public abstract class BaseViewHolder<W> extends RecyclerView.ViewHolder implemen
     public BaseViewHolder(@NonNull ViewGroup parent) {
         super(parent);
         this.views = new SparseArray<>();
-        setItemView(LayoutInflater.from(itemView.getContext()).inflate(getLayoutId(), parent, false));
+        setItemView(LayoutInflater.from(parent.getContext()).inflate(getLayoutId(), parent, false));
 
     }
     public <T> T getAdapterParams(){

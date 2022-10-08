@@ -52,9 +52,12 @@ public class AdapterProcessor extends BaseProcessor {
     private static final ClassName BASE_HOLDER = ClassName.bestGuess(RECYCLE_VIEW_PACKAGE + ".BaseViewHolder");
     private static final ClassName BASE_ADAPTER = ClassName.bestGuess(RECYCLE_VIEW_PACKAGE + ".MultiTypeAdapter");
     private static final ClassName BASE_STRATEGY = ClassName.bestGuess(RECYCLE_VIEW_PACKAGE + ".simple.SimpleStrategy");
+    private static final ClassName BASE_NO_INFLECT_STRATEGY = ClassName.bestGuess(RECYCLE_VIEW_PACKAGE + ".simple.NoReflectStrategy");
     private static final ClassName STRATEGY = ClassName.bestGuess(RECYCLE_VIEW_PACKAGE + ".Strategy");
     private static final String PACKAGE_NAME = Constants.PACKAGE;
     private final Map<String, GroupProcessorModel> groupMap = new HashMap<>();
+    //默认开启非反射
+    private static final boolean USE_NO_INFLECT=true;
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnvironment) {
@@ -199,12 +202,10 @@ public class AdapterProcessor extends BaseProcessor {
                 .addMethod(constructMethod)
                 .addMethod(createTypeFactoryMethod)
                 .build();
-        JavaFile javaFile = JavaFile.builder(PACKAGE_NAME, adapterClass)
-                .build();
         try {
             logger.info("writeTo:"+adapterClass);
-
-            javaFile.writeTo(filer);
+            writeToFile(JavaFile.builder(PACKAGE_NAME, adapterClass)
+                    .build());
         } catch (Exception ee) {
             logger.error(ee);
             logger.info("createAdapterCls error-->"+ee.getMessage());
@@ -220,7 +221,7 @@ public class AdapterProcessor extends BaseProcessor {
         String createFactoryCls = getClsNameByGroup(groupProcessorModel.getGroup(), "Strategy");
         //创建类
         TypeSpec.Builder classBuilder = TypeSpec.classBuilder(createFactoryCls)
-                .addModifiers(Modifier.PUBLIC, Modifier.FINAL).superclass(BASE_STRATEGY);
+                .addModifiers(Modifier.PUBLIC, Modifier.FINAL).superclass(USE_NO_INFLECT?BASE_NO_INFLECT_STRATEGY:BASE_STRATEGY);
         //构造申明
         MethodSpec.Builder constructorBuilder = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC);
@@ -238,6 +239,17 @@ public class AdapterProcessor extends BaseProcessor {
                     , ClassName.bestGuess(oneToManyModels.get(i).getOneToManyModelName())
                     , ClassName.bestGuess(oneToManyModels.get(i).getOneToManyModelCreateName()));
         }
+
+        if(USE_NO_INFLECT){
+            //拼接注册创建holder的
+            List<OneToOneModel> oneToOneHolderRegister = groupProcessorModel.getOneToOneModels();
+            for (int i = 0; i < oneToOneHolderRegister.size(); i++) {
+                constructorBuilder.addStatement("registerHolderCreate($T.class,parent -> new $T(parent))"
+                        , ClassName.bestGuess(oneToOneHolderRegister.get(i).getHolderClsName())
+                        , ClassName.bestGuess(oneToOneHolderRegister.get(i).getHolderClsName()));
+            }
+        }
+
         MethodSpec constructMethod = constructorBuilder.build();
         classBuilder.addMethod(constructMethod);
         writeToFile(JavaFile.builder(PACKAGE_NAME, classBuilder.build()).build());
@@ -265,10 +277,9 @@ public class AdapterProcessor extends BaseProcessor {
         TypeSpec adapterHelper = classBuilder
                 .addModifiers(Modifier.PUBLIC)
                 .build();
-        JavaFile javaFile = JavaFile.builder(PACKAGE_NAME, adapterHelper)
-                .build();
         try {
-            javaFile.writeTo(filer);
+            writeToFile(JavaFile.builder(PACKAGE_NAME, adapterHelper)
+                    .build());
         } catch (Exception ee) {
             logger.error(ee);
         }
