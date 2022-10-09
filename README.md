@@ -19,9 +19,9 @@
 在项目的build.gradle配置
 ```
 dependencies {
-    annotationProcessor 'com.github.cglw.RecyclerAdapter:compiler:v1.0.0'
-    implementation 'com.github.cglw.RecyclerAdapter:lib_adapter:v1.0.0'
-    implementation 'com.github.cglw.RecyclerAdapter:annotations:v1.0.0'
+    annotationProcessor 'com.github.cglw.RecyclerAdapter:compiler:v1.0.1'
+    implementation 'com.github.cglw.RecyclerAdapter:lib_adapter:v1.0.1'
+    implementation 'com.github.cglw.RecyclerAdapter:annotations:v1.0.1'
 }
 
 android {
